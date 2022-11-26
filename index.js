@@ -106,18 +106,18 @@ db.connect(function(err) {
 //   })
 
 
-// app.get('/api/news',(req,res)=>{
-//   db.connect(function(err) {
-//     db.query("SELECT * from news", function(err,result){
-//       if(err) throw err;
-//       console.log(result);
-//       res.send(result);
-//     })
-//   })
-//   })
-// app.get("/", (req, res) => {
-//   res.send("server ís running");
-// });
+app.get('/api/news',(req,res)=>{
+  db.connect(function(err) {
+    db.query("SELECT * from news", function(err,result){
+      if(err) throw err;
+      console.log(result);
+      res.send(result);
+    })
+  })
+  })
+app.get("/", (req, res) => {
+  res.send("server ís running");
+});
 
 app.listen(4000, () => {
   console.log("rungning in port 400");
