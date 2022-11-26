@@ -178,6 +178,33 @@ app.get("/api/newproducts", (req, res) => {
   });
 });
 
+// 
+
+// app.get('/api/pruducts/category_id/',(req,res)=>{
+  
+//   db.connect(function(err) {
+//     db.query("SELECT * from products where category_id=1", function(err,result){
+//       if(err) throw err;
+//       console.log(result);
+//       res.send(result);
+//     })
+//   })
+//   })
+
+
+app.get('/api/news',(req,res)=>{
+  db.connect(function(err) {
+    db.query("SELECT * from news", function(err,result){
+      if(err) throw err;
+      console.log(result);
+      res.send(result);
+    })
+  })
+  })
+app.get("/", (req, res) => {
+  res.send("server ís running");
+});
+
 app.listen(4000, () => {
   console.log("rungning in port 4000");
 });
