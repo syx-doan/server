@@ -54,7 +54,7 @@ app.get('/api/products',(req,res) =>{
   db.connect(function(err) {
     // if (err) throw err;
     // if connection is successful
-  db.query("SELECT * FROM products", function (err, result) {
+  db.query("SELECT * FROM products ORDER BY id_product LIMIT 0,6", function (err, result) {
       // if any error while executing above query, throw error
       if (err) throw err;
       // if there is no error, you have the result
