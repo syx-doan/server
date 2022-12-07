@@ -51,12 +51,12 @@ app.post("/api/thanhtoan", (req) => {
   
  
   const {data} = req.body
-  const {id_user,carts} =data
+  const {id_user,fullname,address,carts} =data
   const sqlInsert =
-  "INSERT INTO `bill` ( `id_user`) VALUES (?);";
+  "INSERT INTO `bill` ( `id_user`,`fullname`,`address`) VALUES (?,?,?);";
   const sqlDetail =
   "INSERT INTO bill_dentail (total,price,id_bill,id_product) VALUES ?;";
-  db.query(sqlInsert, [id_user], (err, result) => {
+  db.query(sqlInsert, [id_user,fullname,address], (err, result) => {
     if(result){     
       const dataCart = []
       carts.forEach(cart => {
