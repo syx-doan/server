@@ -31,8 +31,8 @@ app.get("/api/category", (req, res) => {
     res.send(result);
   });
 });
-
-app.post("/api/insert", (req, res) => {
+// đăng ký
+app.post("/api/dangky", (req, res) => {
   const fullname = req.body.fullname;
   const password = req.body.password;
   const email = req.body.email;
@@ -42,6 +42,36 @@ app.post("/api/insert", (req, res) => {
     console.log(err);
   });
 });
+app.post("/api/thanhtoan", (req) => {
+  // const name = req.body.name;
+  // const phone = req.body.phone;
+  // const address = req.body.address;
+  // const district = req.body.district;
+  // const city = req.body.city;
+  
+ 
+  const {data} = req.body
+  const {id_user,fullname,address,carts} =data
+  const sqlInsert =
+  "INSERT INTO `bill` ( `id_user`,`fullname`,`address`) VALUES (?,?,?);";
+  const sqlDetail =
+  "INSERT INTO bill_dentail (total,price,id_bill,id_product) VALUES ?;";
+  db.query(sqlInsert, [id_user,fullname,address], (err, result) => {
+    if(result){     
+      const dataCart = []
+      carts.forEach(cart => {
+        dataCart.push([cart.qty,cart.price,result.insertId,cart.id_product])
+      })
+      db.query(sqlDetail,  [dataCart] , (err, result) => {
+        if(err){
+          console.log(err)
+        }
+     
+    })
+  }
+});
+});
+//đăng nhập
 app.post("/api/login", (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
@@ -60,14 +90,22 @@ app.post("/api/login", (req, res) => {
     }
   );
 });
+
+// all san pham
 app.get("/api/products", (req, res) => {
   db.connect(function (err) {
-    db.query("SELECT * FROM products", function (err, result) {
-      if (err) throw err;
-      console.log(result);
+    // if (err) throw err;
+    // if connection is successful
+    db.query(
+      "SELECT * FROM products",
+      function (err, result) {
+        // if any error while executing above query, throw error
+        if (err) throw err;
+        console.log(result);
 
-      res.send(result);
-    });
+        res.send(result);
+      }
+    );
   });
 });
 
@@ -107,8 +145,34 @@ app.get("/api/newproducts", (req, res) => {
   });
 });
 
+//
+
+// app.get('/api/pruducts/category_id/',(req,res)=>{
+
+//   db.connect(function(err) {
+//     db.query("SELECT * from products where category_id=1", function(err,result){
+//       if(err) throw err;
+//       console.log(result);
+//       res.send(result);
+//     })
+//   })
+//   })
+
+app.get("/api/news", (req, res) => {
+  db.connect(function (err) {
+    db.query("SELECT * from news", function (err, result) {
+      if (err) throw err;
+      console.log(result);
+      res.send(result);
+    });
+  });
+});
+app.get("/", (req, res) => {
+  res.send("server ís running");
+});
+
 app.listen(4000, () => {
-  console.log("rungning in port 400");
+  console.log("rungning in port 4000");
 });
 
 app.get("/api/categoryproduct", (req, res) => {
