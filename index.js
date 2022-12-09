@@ -36,9 +36,10 @@ app.post("/api/dangky", (req, res) => {
   const fullname = req.body.fullname;
   const password = req.body.password;
   const email = req.body.email;
+  const phone = req.body.phone;
   const sqlInsert =
-    "INSERT INTO `users` ( `fullname`, `password`,`email`) VALUES (?,?,?);";
-  db.query(sqlInsert, [fullname, password, email], (err, result) => {
+    "INSERT INTO `users` ( `fullname`, `password`,`phone`,`email`) VALUES (?,?,?,?);";
+  db.query(sqlInsert, [fullname, password,phone, email], (err, result) => {
     console.log(err);
   });
 });
@@ -51,12 +52,12 @@ app.post("/api/thanhtoan", (req) => {
   
  
   const {data} = req.body
-  const {id_user,fullname,address,carts} =data
+  const {id_user,fullname,note,address,carts} =data
   const sqlInsert =
-  "INSERT INTO `bill` ( `id_user`,`fullname`,`address`) VALUES (?,?,?);";
+  "INSERT INTO `bill` ( `id_user`,`fullname`,`address`,`note`) VALUES (?,?,?,?);";
   const sqlDetail =
   "INSERT INTO bill_dentail (total,price,id_bill,id_product) VALUES ?;";
-  db.query(sqlInsert, [id_user,fullname,address], (err, result) => {
+  db.query(sqlInsert, [id_user,fullname,address,note], (err, result) => {
     if(result){     
       const dataCart = []
       carts.forEach(cart => {
