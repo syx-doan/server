@@ -13,7 +13,7 @@ app.use(cors());
 app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-app.get("/api/get", (req, res) => {
+app.get("/api/users", (req, res) => {
   const sqlSelect = "SELECT * FROM `users` ";
   db.query(sqlSelect, (err, result) => {
     res.send(result);
@@ -36,61 +36,42 @@ app.post("/api/dangky", (req, res) => {
   const fullname = req.body.fullname;
   const password = req.body.password;
   const email = req.body.email;
+  const phone = req.body.phone;
   const sqlInsert =
-    "INSERT INTO `users` ( `fullname`, `password`,`email`) VALUES (?,?,?);";
-  db.query(sqlInsert, [fullname, password, email], (err, result) => {
+    "INSERT INTO `users` ( `fullname`, `password`,`phone`,`email`) VALUES (?,?,?,?);";
+  db.query(sqlInsert, [fullname, password, phone, email], (err, result) => {
     console.log(err);
   });
 });
-// app.post("/api/thanhtoan", (req) => {
-//   const { data } = req.body;
-//   const { id_user, fullname, address, carts } = data;
-//   const sqlInsert =
-//     "INSERT INTO `bill` ( `id_user`,`fullname`,`address`) VALUES (?,?,?);";
-//   const sqlDetail =
-//     "INSERT INTO bill_dentail (total,price,id_bill,id_product) VALUES ?;";
-//   db.query(sqlInsert, [id_user, fullname, address], (err, result) => {
-//     if (result) {
-//       const dataCart = [];
-//       carts.forEach((cart) => {
-//         dataCart.push([cart.qty, cart.price, result.insertId, cart.id_product]);
-//       });
-//       db.query(sqlDetail, [dataCart], (err, result) => {
-//         if (err) {
-//           console.log(err);
-//         }
-//       });
-//     }
-//   });
-// });
 app.post("/api/thanhtoan", (req) => {
   // const name = req.body.name;
   // const phone = req.body.phone;
   // const address = req.body.address;
   // const district = req.body.district;
   // const city = req.body.city;
-
-  const { data } = req.body;
-  const { id_user, fullname, note, address, carts } = data;
+  
+ 
+  const {data} = req.body
+  const {id_user,fullname,note,address,carts} =data
   const sqlInsert =
-    "INSERT INTO `bill` ( `id_user`,`fullname`,`address`,`note`) VALUES (?,?,?,?);";
+  "INSERT INTO `bill` ( `id_user`,`fullname`,`address`,`note`) VALUES (?,?,?,?);";
   const sqlDetail =
-    "INSERT INTO bill_dentail (total,price,id_bill,id_product) VALUES ?;";
-  db.query(sqlInsert, [id_user, fullname, address, note], (err, result) => {
-    if (result) {
-      const dataCart = [];
-      carts.forEach((cart) => {
-        dataCart.push([cart.qty, cart.price, result.insertId, cart.id_product]);
-      });
-      db.query(sqlDetail, [dataCart], (err, result) => {
-        if (err) {
-          console.log(err);
+  "INSERT INTO bill_dentail (total,price,id_bill,id_product) VALUES ?;";
+  db.query(sqlInsert, [id_user,fullname,address,note], (err, result) => {
+    if(result){     
+      const dataCart = []
+      carts.forEach(cart => {
+        dataCart.push([cart.qty,cart.price,result.insertId,cart.id_product])
+      })
+      db.query(sqlDetail,  [dataCart] , (err, result) => {
+        if(err){
+          console.log(err)
         }
-      });
-    }
-  });
+     
+    })
+  }
 });
-
+});
 //đăng nhập
 app.post("/api/login", (req, res) => {
   const email = req.body.email;
@@ -172,10 +153,6 @@ app.get("/", (req, res) => {
   res.send("server ís running");
 });
 
-app.listen(4000, () => {
-  console.log("rungning in port 4000");
-});
-
 app.get("/api/categoryproduct", (req, res) => {
   const categoryid = req.body.categoryid;
   if (categoryid) {
@@ -226,4 +203,8 @@ app.post("/api/comment", (req, res) => {
   db.query(sqlInsert, [comment, idProduct, idUser, ngay], (err, result) => {
     console.log(err);
   });
+});
+
+app.listen(4000, () => {
+  console.log("rungning in port 4000");
 });
