@@ -44,33 +44,25 @@ app.post("/api/dangky", (req, res) => {
   });
 });
 app.post("/api/thanhtoan", (req) => {
-  // const name = req.body.name;
-  // const phone = req.body.phone;
-  // const address = req.body.address;
-  // const district = req.body.district;
-  // const city = req.body.city;
-  
- 
-  const {data} = req.body
-  const {id_user,fullname,note,address,carts} =data
+  const { data } = req.body;
+  const { id_user, fullname, note, address, carts } = data;
   const sqlInsert =
-  "INSERT INTO `bill` ( `id_user`,`fullname`,`address`,`note`) VALUES (?,?,?,?);";
+    "INSERT INTO `bill` ( `id_user`,`fullname`,`address`,`note`) VALUES (?,?,?,?);";
   const sqlDetail =
-  "INSERT INTO bill_dentail (total,price,id_bill,id_product) VALUES ?;";
-  db.query(sqlInsert, [id_user,fullname,address,note], (err, result) => {
-    if(result){     
-      const dataCart = []
-      carts.forEach(cart => {
-        dataCart.push([cart.qty,cart.price,result.insertId,cart.id_product])
-      })
-      db.query(sqlDetail,  [dataCart] , (err, result) => {
-        if(err){
-          console.log(err)
+    "INSERT INTO bill_dentail (total,price,id_bill,id_product) VALUES ?;";
+  db.query(sqlInsert, [id_user, fullname, address, note], (err, result) => {
+    if (result) {
+      const dataCart = [];
+      carts.forEach((cart) => {
+        dataCart.push([cart.qty, cart.price, result.insertId, cart.id_product]);
+      });
+      db.query(sqlDetail, [dataCart], (err, result) => {
+        if (err) {
+          console.log(err);
         }
-     
-    })
-  }
-});
+      });
+    }
+  });
 });
 //đăng nhập
 app.post("/api/login", (req, res) => {
@@ -194,14 +186,49 @@ app.get("/api/comments", (req, res) => {
 });
 
 app.post("/api/comment", (req, res) => {
-  const comment = req.body.comment;
+  const content = req.body.comment;
   const idProduct = req.body.idProduct;
   const idUser = req.body.idUser;
   const ngay = req.body.newTimeString;
   const sqlInsert =
-    "INSERT INTO `comment` ( `comment`, `id_product`, `id_user`, `ngaybinhluan`) VALUES (?,?,?,?);";
-  db.query(sqlInsert, [comment, idProduct, idUser, ngay], (err, result) => {
+    "INSERT INTO `comment` ( `content`, `id_product`, `id_user`, `ngaybinhluan`) VALUES (?,?,?,?);";
+  db.query(sqlInsert, [content, idProduct, idUser, ngay], (err, result) => {
     console.log(err);
+  });
+});
+
+app.get("/api/bill", (req, res) => {
+  db.connect(function (err) {
+    db.query("SELECT * FROM bill", function (err, result) {
+      if (err) throw err;
+      console.log(result);
+
+      res.send(result);
+    });
+  });
+});
+
+app.get("/api/bill_dentail", (req, res) => {
+  db.connect(function (err) {
+    db.query("SELECT * FROM bill_dentail", function (err, result) {
+      if (err) throw err;
+      console.log(result);
+
+      res.send(result);
+    });
+  });
+});
+
+app.post("/api/huydon", (req) => {
+  const idBill = req.body.idBill;
+  const newStatus = req.body.newStatus;
+
+  const sqlInsert = `UPDATE bill SET status = ${newStatus} WHERE id_bill = ${idBill}`;
+
+  db.query(sqlInsert, (err, result) => {
+    if (err) {
+      console.log(err);
+    }
   });
 });
 
