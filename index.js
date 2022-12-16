@@ -19,6 +19,12 @@ app.get("/api/users", (req, res) => {
     res.send(result);
   });
 });
+app.get("/api/slider", (req, res) => {
+  const sqlSelect = "SELECT * FROM `slider` ";
+  db.query(sqlSelect, (err, result) => {
+    res.send(result);
+  });
+});
 app.get("/api/brand", (req, res) => {
   const sqlSelect = "SELECT * FROM `brand` ";
   db.query(sqlSelect, (err, result) => {
@@ -43,26 +49,36 @@ app.post("/api/dangky", (req, res) => {
     console.log(err);
   });
 });
+// Thanh toan
 app.post("/api/thanhtoan", (req) => {
   const { data } = req.body;
-  const { id_user, fullname, note, address, carts } = data;
+  const { id_user, fullname, note, address, newTimeString, carts } = data;
   const sqlInsert =
-    "INSERT INTO `bill` ( `id_user`,`fullname`,`address`,`note`) VALUES (?,?,?,?);";
+    "INSERT INTO `bill` ( `id_user`,`fullname`,`address`,`note`,`ngaydathang`) VALUES (?,?,?,?,?);";
   const sqlDetail =
     "INSERT INTO bill_dentail (total,price,id_bill,id_product) VALUES ?;";
-  db.query(sqlInsert, [id_user, fullname, address, note], (err, result) => {
-    if (result) {
-      const dataCart = [];
-      carts.forEach((cart) => {
-        dataCart.push([cart.qty, cart.price, result.insertId, cart.id_product]);
-      });
-      db.query(sqlDetail, [dataCart], (err, result) => {
-        if (err) {
-          console.log(err);
-        }
-      });
+  db.query(
+    sqlInsert,
+    [id_user, fullname, address, note, newTimeString],
+    (err, result) => {
+      if (result) {
+        const dataCart = [];
+        carts.forEach((cart) => {
+          dataCart.push([
+            cart.qty,
+            cart.price,
+            result.insertId,
+            cart.id_product,
+          ]);
+        });
+        db.query(sqlDetail, [dataCart], (err, result) => {
+          if (err) {
+            console.log(err);
+          }
+        });
+      }
     }
-  });
+  );
 });
 //đăng nhập
 app.post("/api/login", (req, res) => {
@@ -224,6 +240,23 @@ app.post("/api/huydon", (req) => {
   const newStatus = req.body.newStatus;
 
   const sqlInsert = `UPDATE bill SET status = ${newStatus} WHERE id_bill = ${idBill}`;
+
+  db.query(sqlInsert, (err, result) => {
+    if (err) {
+      console.log(err);
+    }
+  });
+});
+
+app.post("/api/capnhattaikhoan", (req) => {
+  const idUser = req.body.idUser;
+  const fullName = req.body.fullName;
+  const email = req.body.email;
+  const image = req.body.image;
+  const phone = req.body.phone;
+  const password = req.body.password;
+
+  const sqlInsert = `UPDATE users SET fullname = '${fullName}', password = '${password}', phone = '${phone}', email = '${email}', image = '${image}' WHERE id_user = ${idUser}`;
 
   db.query(sqlInsert, (err, result) => {
     if (err) {
